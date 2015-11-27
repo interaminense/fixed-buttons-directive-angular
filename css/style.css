@@ -1,0 +1,13 @@
+body {
+  padding: 20px;
+}
+
+tg-fixed-buttons.fixed-bottom {
+  background-color: #fff;
+  bottom: 0;
+  left: 0;
+  padding: 15px 30px;
+  position: fixed;
+  width: 100%;
+  box-shadow: 0px 2px 10px rgba(0, 0 , 0, 1);
+}
