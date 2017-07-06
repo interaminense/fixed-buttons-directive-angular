@@ -1,6 +1,6 @@
-var app = angular.module('app',[]);
+var app = angular.module('app', []);
 
-app.controller('ctrl', ['$scope', function($scope) {
+app.controller('ctrl', ['$scope', function ($scope) {
   // $scope.teste = function(){
   //   document.querySelector('.content-wrapper').style.display = 'block';
   // }
@@ -12,30 +12,61 @@ app.directive('tgFixedButtons', ['$window', '$document', function ($window, $doc
     restrict: 'E',
     link: function (scope, elem) {
 
-      scope.calcDocumentClientHeight = function() {
-        return $document[0].body.clientHeight - 100;
-      }
+      scope.element = {
+        self: elem[0],
+        scroll: scope.element.getScrollParent(scope.element.self),
+        scrollHeight: scope.element.getScrollParentHeight(scope.element.scroll),
+        scrollOffset: scope.element.getOffset(scope.element.scroll),
 
-      scope.functionPositionButtons = function(){
-        if($window.pageYOffset + $window.innerHeight < scope.calcDocumentClientHeight()){
-          elem[0].classList.add("fixed-bottom");
-        }else{
-          elem[0].classList.remove("fixed-bottom");
+        getScrollParentHeight: function (scroll) {
+          return scroll.clientHeight;
+        },
+
+        getScrollParent: function (node) {
+          if (node === null) {
+            return null;
+          } else if (node.scrollHeight > node.clientHeight) {
+            return node;
+          } else {
+            return scope.element.getScrollParent(node.parentNode);
+          }
+        },
+
+        getOffset: function (elem) {
+          let scroll = elem.getBoundingClientRect();
+          return {
+            left: scroll.left + window.scrollX,
+            top: scroll.top + window.scrollY
+          }
+        },
+
+        setActionButtons: function () {
+          if (scope.controllerElement.getBoundingClientRect().top > scope.scrollParentHeight) {
+            scope.element.classList.add('fixed-bottom');
+          } else {
+            scope.element.classList.remove('fixed-bottom');
+          }
+        },
+
+        objController: function () {
+          this.document.createElement('div');
+          this.style.visibility = 'hidden';
+          return this;
+        },
+
+        init: function () {
+
+          scope.element.scroll.insertBefore(scope.element.objController, scope.element.self);
+
+          angular.element(scope.element.scroll).on('scroll', function () {
+            scope.element.setActionButtons();
+          });
+
+          scope.element.setActionButtons();
         }
       }
 
-      //calls this function to load the page
-      scope.functionPositionButtons();
-
-      //calls this function by clicking the dom
-      angular.element($document).on('click', function(){
-        scope.functionPositionButtons();
-      });
-
-      //calls this function to scroll the page
-      angular.element($window).on('scroll', function(){
-        scope.functionPositionButtons();
-      });
+      scope.element.init();
 
     }
   }
