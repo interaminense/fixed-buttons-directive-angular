@@ -28,7 +28,10 @@ app.directive('tgFixedButtons', [function () {
         },
 
         setActionButtons: function (elem, objController, scrollHeight) {
-          if (objController.getBoundingClientRect().top > scrollHeight) {
+
+          // console.log(elem, 'position top ' + objController.getBoundingClientRect().top, 'scroll height ' + scrollHeight);
+
+          if (objController.getBoundingClientRect().top > scrollHeight + 50) {
             elem.classList.add('fixed-bottom');
           } else {
             elem.classList.remove('fixed-bottom');
@@ -62,7 +65,7 @@ app.directive('tgFixedButtons', [function () {
               scope.fn.setActionButtons(scope.elem, scope.objController, window.innerHeight);
             });
           } else {
-            scope.actions(scope.fn.getScrollParent(scope.elem).clientHeight, scope.fn.getScrollParent(scope.elem).clientHeight.clientHeight);
+            scope.actions(scope.fn.getScrollParent(scope.elem), scope.fn.getScrollParent(scope.elem).clientHeight);
 
             angular.element(window).on('resize', function () {
               scope.fn.setActionButtons(scope.elem, scope.objController, scope.fn.getScrollParent(scope.elem).clientHeight);
