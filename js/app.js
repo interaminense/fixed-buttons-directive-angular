@@ -28,9 +28,6 @@ app.directive('tgFixedButtons', [function () {
         },
 
         setActionButtons: function (elem, objController, scrollHeight) {
-
-          // console.log(elem, 'position top ' + objController.getBoundingClientRect().top, 'scroll height ' + scrollHeight);
-
           if (objController.getBoundingClientRect().top > scrollHeight) {
             elem.classList.add('fixed-bottom');
           } else {
@@ -51,22 +48,25 @@ app.directive('tgFixedButtons', [function () {
           scope.objController = scope.fn.objController();
           scope.elem.parentNode.insertBefore(scope.objController, scope.elem);
 
+          scope.actions = function (scroll, height) {
+            angular.element(scroll).on('scroll', function () {
+              scope.fn.setActionButtons(scope.elem, scope.objController, height);
+            });
+            scope.fn.setActionButtons(scope.elem, scope.objController, height);
+          }
+
           if (scope.fn.getScrollParent(scope.elem).tagName == 'HTML') {
-            angular.element(window).on('scroll', function () {
-              scope.fn.setActionButtons(scope.elem, scope.objController, window.innerHeight);
-            });
+            scope.actions(window, window.innerHeight);
+
             angular.element(window).on('resize', function () {
               scope.fn.setActionButtons(scope.elem, scope.objController, window.innerHeight);
             });
-            scope.fn.setActionButtons(scope.elem, scope.objController, window.innerHeight);
           } else {
-            angular.element(scope.fn.getScrollParent(scope.elem)).on('scroll', function () {
-              scope.fn.setActionButtons(scope.elem, scope.objController, scope.fn.getScrollParent(scope.elem).clientHeight);
-            });
+            scope.actions(scope.fn.getScrollParent(scope.elem).clientHeight, scope.fn.getScrollParent(scope.elem).clientHeight.clientHeight);
+
             angular.element(window).on('resize', function () {
               scope.fn.setActionButtons(scope.elem, scope.objController, scope.fn.getScrollParent(scope.elem).clientHeight);
             });
-            scope.fn.setActionButtons(scope.elem, scope.objController, scope.fn.getScrollParent(scope.elem).clientHeight);
           }
 
         }
